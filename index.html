@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>LexiSoup 🍲 | מערכת עתידנית לשינון מילים מובלע</title>
+  
+  <!-- Modern Hebrew Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700;800&family=Rubik:wght@500;700;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+
+  <!-- Core Stylesheets -->
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/games.css">
+</head>
+<body data-adaptive-theme="neon-cyan">
+
+  <!-- Application Header -->
+  <header class="app-header">
+    <div class="brand" id="header-brand">
+      <div class="brand-icon">⚡</div>
+      <div class="brand-text">
+        <h1>LexiSoup</h1>
+        <span>שינון מובלע • Implicit Mastery</span>
+      </div>
+    </div>
+
+    <!-- Live Player Progress Pills -->
+    <div class="nav-stats">
+      <div class="stat-pill streak" title="רצף יומי של ספרינטים">
+        <span>🔥</span>
+        <span id="nav-streak-count">1</span>
+      </div>
+      <div class="stat-pill xp" title="סך נקודות ניסיון שנצברו">
+        <span>⚡</span>
+        <span id="nav-xp-count">0</span>
+        <span style="font-size: 0.75rem;">XP</span>
+      </div>
+      <div class="stat-pill level" title="דרגה נוכחית">
+        <span>🏆</span>
+        <span id="nav-level-count">רמה 1</span>
+      </div>
+    </div>
+
+    <!-- Quick Action Icons -->
+    <div class="header-actions">
+      <button class="icon-btn" id="btn-toggle-sound" title="הפעל / השתק צלילים">🔊</button>
+      <button class="icon-btn" id="btn-header-upload" title="העלאת מסמך אוצר מילים (PDF / TXT)">📁</button>
+      <button class="icon-btn" id="btn-header-settings" title="הגדרות ו-API">⚙️</button>
+    </div>
+  </header>
+
+  <!-- Main View Container -->
+  <main class="main-content" id="app-root">
+    <!-- Rendered dynamically by ViewCoordinator -->
+    <div style="text-align: center; padding: 4rem;">
+      <div style="font-size: 2.5rem; margin-bottom: 1rem;" class="floating">🍲</div>
+      <p style="color: var(--text-muted);">טוען את מרק המילים העתידני...</p>
+    </div>
+  </main>
+
+  <!-- Bottom Navigation Bar -->
+  <nav class="bottom-nav">
+    <button class="nav-item active" data-tab="home">
+      <span class="nav-icon">🏠</span>
+      <span>ראשי וספרינט</span>
+    </button>
+    <button class="nav-item" data-tab="vocab">
+      <span class="nav-icon">📚</span>
+      <span>מאגר מילים</span>
+    </button>
+    <button class="nav-item" data-tab="upload">
+      <span class="nav-icon">⚡</span>
+      <span>טעינת קובץ AI</span>
+    </button>
+    <button class="nav-item" data-tab="settings">
+      <span class="nav-icon">⚙️</span>
+      <span>הגדרות ומודל</span>
+    </button>
+  </nav>
+
+  <!-- Script Modules -->
+  <!-- 1. Preloaded High-Fidelity Dataset (300 Corporate Words) -->
+  <script src="js/data/defaultVocab.js"></script>
+
+  <!-- 2. Models -->
+  <script src="js/models/Word.js"></script>
+  <script src="js/models/GameSession.js"></script>
+  <script src="js/models/UserProfile.js"></script>
+
+  <!-- 3. Storage Layer -->
+  <script src="js/storage/StorageInterface.js"></script>
+  <script src="js/storage/LocalStorageAdapter.js"></script>
+  <script src="js/storage/IndexedDBAdapter.js"></script>
+
+  <!-- 4. Services -->
+  <script src="js/services/AudioService.js"></script>
+  <script src="js/services/SpacedRepetitionService.js"></script>
+  <script src="js/services/FileParserService.js"></script>
+
+  <!-- 5. AI Services & Abstracted Providers -->
+  <script src="js/services/providers/BaseLLMProvider.js"></script>
+  <script src="js/services/providers/GeminiProvider.js"></script>
+  <script src="js/services/providers/GroqProvider.js"></script>
+  <script src="js/services/providers/LocalRuleProvider.js"></script>
+  <script src="js/services/AIService.js"></script>
+
+  <!-- 6. Controllers (Business Logic) -->
+  <script src="js/controllers/VocabController.js"></script>
+  <script src="js/controllers/GameController.js"></script>
+  <script src="js/controllers/SettingsController.js"></script>
+
+  <!-- 7. Views (Presentation Layer) -->
+  <script src="js/views/BaseView.js"></script>
+  <script src="js/views/DashboardView.js"></script>
+  <script src="js/views/SwipeGameView.js"></script>
+  <script src="js/views/ChatGameView.js"></script>
+  <script src="js/views/TimeBombGameView.js"></script>
+  <script src="js/views/VocabListView.js"></script>
+  <script src="js/views/UploadModalView.js"></script>
+  <script src="js/views/SettingsModalView.js"></script>
+  <script src="js/views/ViewCoordinator.js"></script>
+
+  <!-- 8. Bootstrap -->
+  <script src="js/app.js"></script>
+</body>
+</html>

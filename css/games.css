@@ -1,0 +1,532 @@
+/* Live Game HUD (Heads-Up Display) */
+.game-hud {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  padding: 0.75rem 1.25rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-glow);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+}
+
+.hud-item {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.hud-timer {
+  font-family: var(--font-mono);
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.08);
+  padding: 0.3rem 0.8rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-color);
+}
+
+.hud-streak {
+  color: #ff9d00;
+}
+
+.hud-score {
+  color: var(--accent-glow);
+}
+
+.multiplier-tag {
+  background: linear-gradient(135deg, #ff9d00, #ff3366);
+  color: #000;
+  padding: 0.15rem 0.5rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.75rem;
+  font-weight: 900;
+  margin-right: 0.4rem;
+}
+
+/* ============================================================
+   1. MINI-GAME: TINDER-STYLE CONTEXT SWIPE
+   ============================================================ */
+.swipe-arena {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 540px;
+  margin: 0 auto;
+  min-height: 480px;
+  position: relative;
+}
+
+.swipe-deck {
+  width: 100%;
+  height: 380px;
+  position: relative;
+  perspective: 1000px;
+}
+
+.swipe-card {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(160deg, #182035, #101424);
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 2rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+  cursor: grab;
+  user-select: none;
+  touch-action: pan-y;
+  transition: transform 0.15s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.swipe-card:active {
+  cursor: grabbing;
+}
+
+.card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card-target-word {
+  font-size: 1.7rem;
+  font-weight: 800;
+  color: var(--accent-glow);
+  letter-spacing: 0.5px;
+}
+
+.card-translation-badge {
+  background: rgba(255, 255, 255, 0.08);
+  padding: 0.3rem 0.8rem;
+  border-radius: var(--radius-full);
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.card-sentence-box {
+  margin: 1.5rem 0;
+  line-height: 1.6;
+  font-size: 1.25rem;
+  color: #ffffff;
+  font-weight: 500;
+  text-align: left;
+  direction: ltr;
+}
+
+.card-sentence-box .highlight {
+  color: var(--accent-glow);
+  text-decoration: underline wavy var(--accent-glow);
+  font-weight: 800;
+}
+
+.card-prompt-hint {
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.swipe-indicator {
+  position: absolute;
+  top: 1.5rem;
+  padding: 0.5rem 1.2rem;
+  border-radius: var(--radius-md);
+  font-weight: 900;
+  font-size: 1.2rem;
+  opacity: 0;
+  transition: opacity 0.1s ease;
+  pointer-events: none;
+}
+
+.swipe-indicator.like {
+  right: 1.5rem;
+  color: #00ff9d;
+  border: 3px solid #00ff9d;
+  transform: rotate(15deg);
+}
+
+.swipe-indicator.nope {
+  left: 1.5rem;
+  color: #ff3366;
+  border: 3px solid #ff3366;
+  transform: rotate(-15deg);
+}
+
+.swipe-actions-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  margin-top: 1.5rem;
+  width: 100%;
+}
+
+.action-circle-btn {
+  width: 64px;
+  height: 64px;
+  border-radius: var(--radius-full);
+  border: 2px solid;
+  background: var(--bg-card);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.7rem;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+}
+
+.action-circle-btn.btn-wrong {
+  border-color: #ff3366;
+  color: #ff3366;
+}
+
+.action-circle-btn.btn-wrong:hover {
+  background: #ff3366;
+  color: #000;
+  box-shadow: 0 0 25px rgba(255, 51, 102, 0.5);
+  transform: scale(1.1);
+}
+
+.action-circle-btn.btn-right {
+  border-color: #00ff9d;
+  color: #00ff9d;
+}
+
+.action-circle-btn.btn-right:hover {
+  background: #00ff9d;
+  color: #000;
+  box-shadow: 0 0 25px rgba(0, 255, 157, 0.5);
+  transform: scale(1.1);
+}
+
+/* Feedback Overlay */
+.card-explanation-banner {
+  margin-top: 1rem;
+  padding: 1rem;
+  border-radius: var(--radius-md);
+  font-size: 0.95rem;
+  line-height: 1.5;
+  width: 100%;
+  animation: popIn 0.25s ease;
+}
+
+.card-explanation-banner.correct {
+  background: rgba(0, 255, 157, 0.15);
+  border: 1px solid rgba(0, 255, 157, 0.4);
+  color: #a7ffdb;
+}
+
+.card-explanation-banner.incorrect {
+  background: rgba(255, 51, 102, 0.15);
+  border: 1px solid rgba(255, 51, 102, 0.4);
+  color: #ffb3c5;
+}
+
+/* ============================================================
+   2. MINI-GAME: SMS / SLACK CORPORATE CHAT SIMULATOR
+   ============================================================ */
+.chat-game-container {
+  max-width: 480px;
+  margin: 0 auto;
+  background: #111422;
+  border: 2px solid var(--border-glow);
+  border-radius: 28px;
+  overflow: hidden;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.7), var(--shadow-neon);
+  display: flex;
+  flex-direction: column;
+  height: 580px;
+}
+
+.phone-status-bar {
+  background: #090b12;
+  padding: 0.5rem 1.25rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  font-weight: 600;
+}
+
+.chat-contact-header {
+  background: rgba(22, 28, 45, 0.95);
+  border-bottom: 1px solid var(--border-color);
+  padding: 0.75rem 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.chat-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-full);
+  background: linear-gradient(135deg, var(--accent-glow), var(--accent-violet));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  border: 2px solid var(--border-glow);
+}
+
+.chat-contact-info h4 {
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.chat-contact-info span {
+  font-size: 0.75rem;
+  color: var(--accent-emerald);
+}
+
+.chat-messages-area {
+  flex: 1;
+  padding: 1.25rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  background: radial-gradient(circle at center, rgba(18, 24, 40, 0.6) 0%, rgba(10, 12, 20, 0.9) 100%);
+}
+
+.chat-bubble {
+  max-width: 85%;
+  padding: 0.9rem 1.15rem;
+  border-radius: 18px;
+  font-size: 1.05rem;
+  line-height: 1.5;
+  position: relative;
+  direction: ltr;
+  text-align: left;
+}
+
+.chat-bubble.incoming {
+  align-self: flex-start;
+  background: #1e263d;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #f0f4fc;
+  border-bottom-left-radius: 4px;
+}
+
+.chat-bubble.incoming .blank-highlight {
+  display: inline-block;
+  padding: 0.1rem 0.6rem;
+  background: rgba(0, 240, 255, 0.15);
+  border: 1px dashed var(--accent-glow);
+  border-radius: var(--radius-sm);
+  color: var(--accent-glow);
+  font-weight: 800;
+}
+
+.chat-bubble.outgoing {
+  align-self: flex-end;
+  background: linear-gradient(135deg, #0077ff, var(--accent-glow));
+  color: #000;
+  font-weight: 600;
+  border-bottom-right-radius: 4px;
+}
+
+.chat-target-hint {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  text-align: center;
+  direction: rtl;
+  margin-top: 0.25rem;
+}
+
+.chat-options-panel {
+  background: #0d101c;
+  border-top: 1px solid var(--border-color);
+  padding: 1rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.6rem;
+}
+
+.chat-option-chip {
+  padding: 0.75rem 0.5rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  color: var(--text-main);
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+  text-align: center;
+  direction: ltr;
+  transition: var(--transition-smooth);
+}
+
+.chat-option-chip:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--accent-glow);
+  color: var(--accent-glow);
+  transform: translateY(-2px);
+}
+
+.chat-option-chip.correct {
+  background: #00ff9d !important;
+  color: #000 !important;
+  border-color: #00ff9d !important;
+}
+
+.chat-option-chip.wrong {
+  background: #ff3366 !important;
+  color: #fff !important;
+  border-color: #ff3366 !important;
+}
+
+/* ============================================================
+   3. MINI-GAME: TIME-BOMB SYNONYM MATCH RUSH
+   ============================================================ */
+.timebomb-arena {
+  max-width: 580px;
+  margin: 0 auto;
+  text-align: center;
+  padding: 1.5rem;
+}
+
+.bomb-visual {
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.bomb-icon {
+  font-size: 4rem;
+  filter: drop-shadow(0 0 20px rgba(255, 51, 102, 0.4));
+  animation: floatBob 2s ease-in-out infinite;
+}
+
+.fuse-track {
+  width: 240px;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  margin-top: 0.75rem;
+}
+
+.fuse-fill {
+  height: 100%;
+  width: 100%;
+  background: #00ff9d;
+  transition: width 1s linear, background-color 1s ease;
+}
+
+.bomb-target-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-glow);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: var(--shadow-neon);
+}
+
+.bomb-target-word {
+  font-size: 2.2rem;
+  font-weight: 900;
+  color: var(--accent-glow);
+  letter-spacing: 1px;
+}
+
+.bomb-target-prompt {
+  font-size: 1rem;
+  color: var(--text-muted);
+  margin-top: 0.5rem;
+}
+
+.synonym-choices-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.85rem;
+}
+
+.synonym-choice-btn {
+  padding: 1rem;
+  background: #141a2d;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  color: var(--text-main);
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+}
+
+.synonym-choice-btn:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--accent-glow);
+  color: var(--accent-glow);
+  transform: translateY(-2px);
+}
+
+.synonym-choice-btn.correct {
+  background: #00ff9d !important;
+  color: #000 !important;
+  border-color: #00ff9d !important;
+  box-shadow: 0 0 25px #00ff9d;
+}
+
+.synonym-choice-btn.wrong {
+  background: #ff3366 !important;
+  color: #fff !important;
+  border-color: #ff3366 !important;
+}
+
+/* ============================================================
+   SESSION SUMMARY VIEW
+   ============================================================ */
+.session-summary-card {
+  max-width: 520px;
+  margin: 2rem auto;
+  text-align: center;
+  background: var(--bg-card);
+  border: 2px solid var(--border-glow);
+  border-radius: var(--radius-lg);
+  padding: 2.5rem 2rem;
+  box-shadow: var(--shadow-card), var(--shadow-neon);
+}
+
+.summary-score-large {
+  font-size: 3.5rem;
+  font-weight: 900;
+  background: linear-gradient(135deg, var(--accent-glow), var(--accent-emerald));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  line-height: 1;
+  margin: 1rem 0;
+}
+
+.summary-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin: 2rem 0;
+}
+
+.summary-stat-box {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 1rem 0.5rem;
+}
+
+.summary-stat-box .stat-val {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--text-main);
+}
+
+.summary-stat-box .stat-label {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-top: 0.25rem;
+}
