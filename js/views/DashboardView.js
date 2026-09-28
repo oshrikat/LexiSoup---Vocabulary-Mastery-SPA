@@ -1,6 +1,7 @@
 /**
  * DashboardView
- * Home view displaying retention metrics, quick sprint launcher, and mini-game cards.
+ * Home view displaying retention metrics, prep mode launcher, AI tutor shortcut,
+ * and mini-game cards.
  */
 class DashboardView extends BaseView {
   renderDashboard() {
@@ -10,34 +11,42 @@ class DashboardView extends BaseView {
 
     const html = `
       <div class="dashboard-container animate-pop">
-        <!-- Hero Section: Daily Rapid Sprint -->
+        
+        <!-- Two-Stage Learning Architecture Banner -->
         <div class="glass-panel hero-banner" style="margin-bottom: 2rem; border-color: var(--border-glow); position: relative; overflow: hidden;">
-          <div style="position: absolute; left: -20px; top: -20px; width: 150px; height: 150px; background: radial-gradient(circle, var(--border-glow) 0%, transparent 70%); opacity: 0.3; pointer-events: none;"></div>
+          <div style="position: absolute; left: -20px; top: -20px; width: 160px; height: 160px; background: radial-gradient(circle, var(--border-glow) 0%, transparent 70%); opacity: 0.25; pointer-events: none;"></div>
           
           <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.5rem;">
             <div>
-              <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+              <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; flex-wrap: wrap;">
                 <span class="badge" style="background: rgba(0, 240, 255, 0.15); color: var(--accent-glow); border: 1px solid var(--border-glow);">
-                  ⚡ למידה מובלעת (Implicit Learning)
+                  ⚡ למידה מובלעת בשני שלבים (Prep & Test)
                 </span>
                 <span class="badge" style="background: rgba(255, 157, 0, 0.15); color: #ff9d00;">
                   רצף ${profile.dailyStreak} ימים 🔥
                 </span>
               </div>
               <h2 style="font-size: 1.8rem; font-weight: 800; margin-bottom: 0.5rem;">
-                ספרינט שינון יומי (5-10 דקות)
+                ברוך הבא למרק המילים, אושרי!
               </h2>
-              <p style="color: var(--text-muted); font-size: 1rem; max-width: 550px; line-height: 1.5;">
-                מנות קצרות של תרחישים אמיתיים מהעולם התאגידי והטכנולוגי. 
-                בלי כרטיסיות משעממות — רק סווייפים מהירים, צ'אטים דחופים וחידות הקשר.
+              <p style="color: var(--text-muted); font-size: 1rem; max-width: 580px; line-height: 1.5;">
+                <strong>שלב 1:</strong> עשה היכרות מקדימה עם המילים, הפירושים ומשפטי הדוגמה.<br>
+                <strong>שלב 2:</strong> קפוץ למשחקי הבדיקה (סווייפ, צ'אט ופצצת זמן) כדי לבחון את הזיכרון בתת-המודע.
               </p>
             </div>
 
-            <div style="display: flex; flex-direction: column; gap: 0.75rem; min-width: 200px;">
-              <button class="btn btn-primary btn-lg" id="btn-start-sprint" style="width: 100%;">
-                <span>התחל ספרינט עכשיו</span>
-                <span style="font-size: 1.3rem;">🚀</span>
+            <!-- Main Primary Action Buttons -->
+            <div style="display: flex; flex-direction: column; gap: 0.75rem; min-width: 230px;">
+              <button class="btn btn-primary btn-lg" id="btn-start-prep" style="width: 100%; box-shadow: 0 0 25px rgba(0, 240, 255, 0.35);">
+                <span>שלב היכרות מקדים (10 מילים)</span>
+                <span style="font-size: 1.3rem;">📖</span>
               </button>
+
+              <button class="btn btn-secondary" id="btn-start-sprint" style="width: 100%;">
+                <span>התחל משחקי בדיקה (ספרינט)</span>
+                <span>🚀</span>
+              </button>
+
               ${mistakes.length > 0 ? `
                 <button class="btn btn-danger" id="btn-start-review" style="width: 100%;">
                   <span>סבב שיפור ציון (${mistakes.length} טעויות)</span>
@@ -48,75 +57,110 @@ class DashboardView extends BaseView {
           </div>
         </div>
 
-        <!-- Metrics Grid -->
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.25rem; margin-bottom: 2rem;">
-          <div class="glass-panel" style="text-align: center;">
-            <div style="font-size: 2.2rem; font-weight: 900; color: var(--accent-glow);">${metrics.total}</div>
-            <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.3rem;">אוצר מילים במאגר</div>
+        <!-- AI Assistant & Lexicon Quick Access Cards -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-bottom: 2rem;">
+          <!-- Card A: AI Personal Tutor -->
+          <div class="glass-panel" style="display: flex; align-items: center; justify-content: space-between; border-color: rgba(176, 38, 255, 0.4); background: linear-gradient(135deg, rgba(22, 28, 45, 0.8), rgba(40, 20, 60, 0.4)); padding: 1.25rem 1.5rem; cursor: pointer;" id="card-launch-tutor">
+            <div style="display: flex; align-items: center; gap: 1rem;">
+              <div style="font-size: 2.2rem; background: rgba(176, 38, 255, 0.2); width: 50px; height: 50px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; border: 1px solid rgba(176, 38, 255, 0.5);">
+                🤖
+              </div>
+              <div>
+                <h4 style="font-size: 1.15rem; font-weight: 800; color: #fff; margin-bottom: 0.2rem;">עוזר אישי AI (שיחת יום-יום)</h4>
+                <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.4;">
+                  שיחה פתוחה עם מנטור ששוזר מילים באלגנטיות ובודק אם הבנת.
+                </p>
+              </div>
+            </div>
+            <button class="btn btn-secondary" style="border-color: var(--accent-violet); color: var(--accent-violet); flex-shrink: 0;">
+              שוחח עכשיו 💬
+            </button>
           </div>
-          <div class="glass-panel" style="text-align: center;">
-            <div style="font-size: 2.2rem; font-weight: 900; color: var(--accent-emerald);">${metrics.mastered}</div>
-            <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.3rem;">מילים שהוטמעו (מאסטרי 80%+)</div>
-          </div>
-          <div class="glass-panel" style="text-align: center;">
-            <div style="font-size: 2.2rem; font-weight: 900; color: #ffaa00;">${metrics.learning}</div>
-            <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.3rem;">בתהליך הטמעה פעיל</div>
-          </div>
-          <div class="glass-panel" style="text-align: center;">
-            <div style="font-size: 2.2rem; font-weight: 900; color: #ff3366;">${metrics.mistakesCount}</div>
-            <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.3rem;">טעויות ממתינות לתיקון</div>
+
+          <!-- Card B: Full Lexicon / Dictionary -->
+          <div class="glass-panel" style="display: flex; align-items: center; justify-content: space-between; border-color: rgba(0, 255, 157, 0.4); background: linear-gradient(135deg, rgba(22, 28, 45, 0.8), rgba(15, 45, 30, 0.4)); padding: 1.25rem 1.5rem; cursor: pointer;" id="card-launch-lexicon">
+            <div style="display: flex; align-items: center; gap: 1rem;">
+              <div style="font-size: 2.2rem; background: rgba(0, 255, 157, 0.2); width: 50px; height: 50px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; border: 1px solid rgba(0, 255, 157, 0.5);">
+                📖
+              </div>
+              <div>
+                <h4 style="font-size: 1.15rem; font-weight: 800; color: #fff; margin-bottom: 0.2rem;">לקסיקון: כל המילים והפירושים</h4>
+                <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.4;">
+                  צפייה בטבלה מלאה, חיפוש מיידי והדפסת כל 300 המילים.
+                </p>
+              </div>
+            </div>
+            <button class="btn btn-secondary" style="border-color: var(--accent-emerald); color: var(--accent-emerald); flex-shrink: 0;">
+              פתח רשימה 📋
+            </button>
           </div>
         </div>
 
-        <!-- Mini-Games Selection -->
+        <!-- Metrics Grid -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+          <div class="glass-panel" style="text-align: center; padding: 1.2rem;">
+            <div style="font-size: 2rem; font-weight: 900; color: var(--accent-glow);">${metrics.total}</div>
+            <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.2rem;">אוצר מילים במאגר</div>
+          </div>
+          <div class="glass-panel" style="text-align: center; padding: 1.2rem;">
+            <div style="font-size: 2rem; font-weight: 900; color: var(--accent-emerald);">${metrics.mastered}</div>
+            <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.2rem;">מילים שהוטמעו (80%+)</div>
+          </div>
+          <div class="glass-panel" style="text-align: center; padding: 1.2rem;">
+            <div style="font-size: 2rem; font-weight: 900; color: #ffaa00;">${metrics.learning}</div>
+            <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.2rem;">בתהליך למידה</div>
+          </div>
+          <div class="glass-panel" style="text-align: center; padding: 1.2rem;">
+            <div style="font-size: 2rem; font-weight: 900; color: #ff3366;">${metrics.mistakesCount}</div>
+            <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.2rem;">טעויות ממתינות לתיקון</div>
+          </div>
+        </div>
+
+        <!-- Mini-Games Section -->
         <h3 style="font-size: 1.3rem; font-weight: 800; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
-          <span>משחקי מיני ממוקדים (מרק הירקות)</span>
-          <span style="font-size: 1rem; color: var(--text-muted); font-weight: 400;">בחר מוד משחק ספציפי</span>
+          <span>משחקי בדיקה מהירים (השלב שבוחן אותך)</span>
         </h3>
 
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem; margin-bottom: 2rem;">
           <!-- Game 1: Context Swipe -->
           <div class="glass-panel" style="display: flex; flex-direction: column; justify-content: space-between; border-radius: var(--radius-lg);">
             <div>
-              <div style="font-size: 2.5rem; margin-bottom: 0.75rem;">🃏</div>
-              <h4 style="font-size: 1.2rem; font-weight: 800; margin-bottom: 0.5rem;">סווייפ הקשרים (Context Swipe)</h4>
-              <p style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.5; margin-bottom: 1.25rem;">
-                בסגנון טינדר: קרא משפט תאגידי אמיתי. סווייפ ימינה אם המילה מנוסחת בהקשר מדויק, שמאלה אם יש סתירה לשונית.
+              <div style="font-size: 2.2rem; margin-bottom: 0.5rem;">🃏</div>
+              <h4 style="font-size: 1.15rem; font-weight: 800; margin-bottom: 0.4rem;">סווייפ הקשרים (Context Swipe)</h4>
+              <p style="color: var(--text-muted); font-size: 0.85rem; line-height: 1.4; margin-bottom: 1rem;">
+                בסגנון טינדר: קרא משפט תאגידי. סווייפ ימינה אם המילה מנוסחת בהקשר מדויק, שמאלה אם יש סתירה.
               </p>
             </div>
             <button class="btn btn-secondary" id="btn-launch-swipe" style="width: 100%;">
-              <span>שחק סווייפ</span>
-              <span>👈 👉</span>
+              <span>שחק סווייפ 👈 👉</span>
             </button>
           </div>
 
           <!-- Game 2: SMS Chat -->
           <div class="glass-panel" style="display: flex; flex-direction: column; justify-content: space-between; border-radius: var(--radius-lg);">
             <div>
-              <div style="font-size: 2.5rem; margin-bottom: 0.75rem;">💬</div>
-              <h4 style="font-size: 1.2rem; font-weight: 800; margin-bottom: 0.5rem;">סימולטור צ'אט (Corporate SMS)</h4>
-              <p style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.5; margin-bottom: 1.25rem;">
-                קולגות ב-Slack שולחים הודעות דחופות. השלם את המילה החסרה כדי לשמור על מקצועיות ומהירות תגובה.
+              <div style="font-size: 2.2rem; margin-bottom: 0.5rem;">💬</div>
+              <h4 style="font-size: 1.15rem; font-weight: 800; margin-bottom: 0.4rem;">סימולטור צ'אט ארגוני (Corporate Slack)</h4>
+              <p style="color: var(--text-muted); font-size: 0.85rem; line-height: 1.4; margin-bottom: 1rem;">
+                הקולגות שולחים הודעות דחופות. השלם את המילה החסרה כדי לשמור על מקצועיות.
               </p>
             </div>
             <button class="btn btn-secondary" id="btn-launch-chat" style="width: 100%;">
-              <span>פתח צ'אט</span>
-              <span>📱</span>
+              <span>פתח צ'אט 📱</span>
             </button>
           </div>
 
           <!-- Game 3: Time Bomb -->
           <div class="glass-panel" style="display: flex; flex-direction: column; justify-content: space-between; border-radius: var(--radius-lg);">
             <div>
-              <div style="font-size: 2.5rem; margin-bottom: 0.75rem;">💣</div>
-              <h4 style="font-size: 1.2rem; font-weight: 800; margin-bottom: 0.5rem;">פצצת זמן (Synonym Blitz)</h4>
-              <p style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.5; margin-bottom: 1.25rem;">
-                הפתיל בוער! התאם במהירות את המונח או הנרדף המקביל לפני שהפצצה מתפוצצת. קצב אדרנלין גבוה.
+              <div style="font-size: 2.2rem; margin-bottom: 0.5rem;">💣</div>
+              <h4 style="font-size: 1.15rem; font-weight: 800; margin-bottom: 0.4rem;">פצצת זמן ונרדפים (Synonym Blitz)</h4>
+              <p style="color: var(--text-muted); font-size: 0.85rem; line-height: 1.4; margin-bottom: 1rem;">
+                הפתיל בוער! התאם במהירות את המונח או הנרדף המקביל לפני שהפצצה מתפוצצת.
               </p>
             </div>
             <button class="btn btn-secondary" id="btn-launch-timebomb" style="width: 100%;">
-              <span>נטרל פצצה</span>
-              <span>⏱️</span>
+              <span>נטרל פצצה ⏱️</span>
             </button>
           </div>
         </div>
@@ -128,12 +172,24 @@ class DashboardView extends BaseView {
   }
 
   bindEvents() {
+    document.getElementById('btn-start-prep')?.addEventListener('click', () => {
+      this.app.views.showPrepMode();
+    });
+
     document.getElementById('btn-start-sprint')?.addEventListener('click', () => {
       this.app.gameController.startSession('sprint', this.app.userProfile.defaultSprintMinutes);
     });
 
     document.getElementById('btn-start-review')?.addEventListener('click', () => {
       this.app.gameController.startSession('review', this.app.userProfile.defaultSprintMinutes);
+    });
+
+    document.getElementById('card-launch-tutor')?.addEventListener('click', () => {
+      this.app.views.showAITutor();
+    });
+
+    document.getElementById('card-launch-lexicon')?.addEventListener('click', () => {
+      this.app.views.showVocabList();
     });
 
     document.getElementById('btn-launch-swipe')?.addEventListener('click', () => {

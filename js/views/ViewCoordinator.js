@@ -6,6 +6,8 @@ class ViewCoordinator {
   constructor(app) {
     this.app = app;
     this.dashboardView = new DashboardView(app, 'app-root');
+    this.prepModeView = new PrepModeView(app, 'app-root');
+    this.aiTutorChatView = new AITutorChatView(app, 'app-root');
     this.swipeGameView = new SwipeGameView(app, 'app-root');
     this.chatGameView = new ChatGameView(app, 'app-root');
     this.timeBombGameView = new TimeBombGameView(app, 'app-root');
@@ -20,6 +22,18 @@ class ViewCoordinator {
     this.updateTabHighlight();
     this.updateHeaderStats();
     this.dashboardView.renderDashboard();
+  }
+
+  showPrepMode(words = null, batchSize = 10) {
+    this.currentTab = 'prep';
+    this.updateTabHighlight();
+    this.prepModeView.startPrep(words, batchSize);
+  }
+
+  showAITutor() {
+    this.currentTab = 'tutor';
+    this.updateTabHighlight();
+    this.aiTutorChatView.show();
   }
 
   showVocabList() {
@@ -124,12 +138,13 @@ class ViewCoordinator {
 
         <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
           <button class="btn btn-secondary" id="btn-summary-home">
-            <span>חזרה ללוח הבקרה</span>
-            <span>🏠</span>
+            <span>חזרה ללוח הבקרה 🏠</span>
           </button>
-          <button class="btn btn-primary" id="btn-summary-again">
-            <span>ספרינט נוסף</span>
-            <span>⚡</span>
+          <button class="btn btn-primary" id="btn-summary-prep">
+            <span>עבור לשלב היכרות הבא 📖</span>
+          </button>
+          <button class="btn btn-success" id="btn-summary-again">
+            <span>ספרינט נוסף ⚡</span>
           </button>
         </div>
       </div>
@@ -139,6 +154,10 @@ class ViewCoordinator {
 
     document.getElementById('btn-summary-home')?.addEventListener('click', () => {
       this.showDashboard();
+    });
+
+    document.getElementById('btn-summary-prep')?.addEventListener('click', () => {
+      this.showPrepMode();
     });
 
     document.getElementById('btn-summary-again')?.addEventListener('click', () => {

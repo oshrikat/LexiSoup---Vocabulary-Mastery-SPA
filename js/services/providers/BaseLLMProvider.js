@@ -25,6 +25,16 @@ class BaseLLMProvider {
   async testConnection() {
     throw new Error('testConnection must be implemented by provider');
   }
+
+  /**
+   * Interactive Conversational Chat with AI Tutor
+   * @param {Array<{role: string, text: string}>} conversationHistory
+   * @param {Array<Object>} targetWords - List of words to weave into chat
+   * @returns {Promise<string>}
+   */
+  async sendChatMessage(conversationHistory, targetWords = []) {
+    throw new Error('sendChatMessage must be implemented by provider');
+  }
 }
 
 window.BaseLLMProvider = BaseLLMProvider;

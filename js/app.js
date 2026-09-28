@@ -86,6 +86,8 @@ class LexiSoupApp {
       btn.addEventListener('click', () => {
         const tab = btn.dataset.tab;
         if (tab === 'home') this.views.showDashboard();
+        else if (tab === 'prep') this.views.showPrepMode();
+        else if (tab === 'tutor') this.views.showAITutor();
         else if (tab === 'vocab') this.views.showVocabList();
         else if (tab === 'upload') this.views.showUploadModal();
         else if (tab === 'settings') this.views.showSettingsModal();

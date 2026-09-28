@@ -1,6 +1,6 @@
 /**
  * GeminiProvider
- * Connects directly to Google Gemini API (v1beta) using JSON schema generation.
+ * Connects directly to Google Gemini API (v1beta) using JSON schema generation and Conversational Chat.
  */
 class GeminiProvider extends BaseLLMProvider {
   constructor(apiKey = '', model = 'gemini-1.5-flash') {
@@ -123,6 +123,80 @@ ${rawText.slice(0, 15000)}
       console.error('Failed to parse Gemini JSON output:', candidateText);
       throw new Error('פלט ה-JSON שהתקבל מ-Gemini לא היה תקין.');
     }
+  }
+
+  async sendChatMessage(conversationHistory, targetWords = []) {
+    if (!this.apiKey) {
+      throw new Error('חסר מפתח Gemini API. נא להזין מפתח בהגדרות (סמל גלגל השיניים ⚙️) כדי לשוחח עם העוזר האישי.');
+    }
+
+    const wordsListStr = targetWords.map(w => `• "${w.word}" (${w.translation_he}): ${w.definition || ''}`).join('\n');
+
+    const systemPrompt = `
+You are Alex, an elite, witty and warm conversational AI language mentor in the LexiSoup app.
+Your user is Oshri, a software developer and tech enthusiast practicing advanced corporate and professional English.
+Your goal is to have a casual, natural everyday conversation (like two colleagues or friends talking over coffee or Slack), while elegantly weaving in target vocabulary words and checking if Oshri understands them naturally.
+
+Target vocabulary words you can practice:
+${wordsListStr}
+
+Behavior Guidelines:
+1. Speak mainly in natural conversational English. Friendly, modern, upbeat tech colleague tone.
+2. Weave 1 or 2 target vocabulary words into your message in bold (e.g. **resilience**, **mitigate**, **conundrum**).
+3. Connect the word to a realistic everyday or tech scenario and ask a casual question to engage Oshri (e.g., "How was your day? We had an **abysmal** network latency earlier, did you ever have to troubleshoot something like that?").
+4. If Oshri uses one of the target words or shows clear comprehension, compliment him warmly (e.g., "Spot on! That's how a pro uses **mitigate**! 🔥 (+50 XP)").
+5. If Oshri asks what a word means or seems confused, explain the nuance kindly and concisely in Hebrew/English with a simple example.
+6. Keep each of your responses concise (2 to 4 sentences max) to keep the chat fast, snappy, and fun.
+`;
+
+    // Build Gemini contents
+    const contents = [];
+    
+    // First message with system context
+    let isFirst = true;
+    for (const msg of conversationHistory) {
+      const role = (msg.role === 'user') ? 'user' : 'model';
+      let text = msg.text;
+      if (isFirst && role === 'user') {
+        text = `[System Instruction: ${systemPrompt}]\n\n${text}`;
+        isFirst = false;
+      }
+      contents.push({
+        role: role,
+        parts: [{ text: text }]
+      });
+    }
+
+    if (contents.length === 0) {
+      contents.push({
+        role: 'user',
+        parts: [{ text: `[System Instruction: ${systemPrompt}]\n\nStart the conversation with a friendly greeting and weave in 1-2 words from our list!` }]
+      });
+    }
+
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/${this.model}:generateContent?key=${this.apiKey}`;
+
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: contents,
+        generationConfig: {
+          temperature: 0.7,
+          maxOutputTokens: 350
+        }
+      })
+    });
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error?.message || `שגיאת תקשורת עם Gemini API (${res.status})`);
+    }
+
+    const data = await res.json();
+    const reply = data.candidates?.[0]?.content?.parts?.[0]?.text;
+    if (!reply) throw new Error('לא התקבלה תשובה מ-Gemini.');
+    return reply.trim();
   }
 }
 

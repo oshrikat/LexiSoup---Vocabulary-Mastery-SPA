@@ -1,6 +1,6 @@
 /**
  * GroqProvider
- * Connects to Groq API (OpenAI-compatible) for ultra-fast, free tier LLM inference.
+ * Connects to Groq API (OpenAI-compatible) for ultra-fast LLM inference and Conversational Chat.
  */
 class GroqProvider extends BaseLLMProvider {
   constructor(apiKey = '', model = 'llama-3.3-70b-versatile') {
@@ -88,6 +88,51 @@ ${rawText.slice(0, 10000)}
     const content = data.choices?.[0]?.message?.content;
     const parsed = JSON.parse(content);
     return Array.isArray(parsed) ? parsed : (parsed.words || []);
+  }
+
+  async sendChatMessage(conversationHistory, targetWords = []) {
+    if (!this.apiKey) {
+      throw new Error('חסר מפתח Groq API. נא להזין מפתח בהגדרות כדי לשוחח.');
+    }
+
+    const wordsListStr = targetWords.map(w => `• "${w.word}" (${w.translation_he})`).join('\n');
+    const systemPrompt = `
+You are Alex, an elite and friendly AI language mentor for Oshri in the LexiSoup app.
+Have a casual everyday conversation, elegantly weaving in 1-2 target vocabulary words in bold (e.g. **resilience**).
+Target words:
+${wordsListStr}
+Be concise (2-4 sentences max), friendly, and test if Oshri understands. Compliment good usage!
+`;
+
+    const messages = [
+      { role: 'system', content: systemPrompt },
+      ...conversationHistory.map(m => ({
+        role: m.role === 'user' ? 'user' : 'assistant',
+        content: m.text
+      }))
+    ];
+
+    const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${this.apiKey}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        model: this.model,
+        messages: messages,
+        temperature: 0.7,
+        max_tokens: 300
+      })
+    });
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error?.message || `Groq API error: ${res.status}`);
+    }
+
+    const data = await res.json();
+    return data.choices?.[0]?.message?.content?.trim() || '';
   }
 }
 

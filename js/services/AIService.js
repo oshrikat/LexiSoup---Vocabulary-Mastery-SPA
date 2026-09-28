@@ -33,6 +33,10 @@ class AIService {
   async parseAndGenerateVocab(rawText, onProgress) {
     return await this.provider.parseAndGenerateVocab(rawText, onProgress);
   }
+
+  async sendChatMessage(conversationHistory, targetWords) {
+    return await this.provider.sendChatMessage(conversationHistory, targetWords);
+  }
 }
 
 window.AIService = AIService;
